@@ -49,28 +49,50 @@ function App() {
     });
   }
   useEffect(() => {
-    loginUser("john_doe", "password123")
-      .then((user) => {
-        return fetchUserData(user.userId);
-      })
-      .then((userData) => {
-        return updateUserProfile(userData, "Updated Profile Data");
-      })
-      .then((updatedUser) => {
-        return saveUserSettings(updatedUser.userId, { theme: "dark mode" });
-      })
-      .then((savedSettings) => {
-        return sendNotification(
+    // Wrapping the async function inside useEffect
+    const performOperations = async () => {
+      try {
+        const user = await loginUser("pvskr", "pass12345");
+        const userData = await fetchUserData(user.userId);
+        const updatedUser = await updateUserProfile(
+          userData,
+          "Updated Profile Data"
+        );
+        const savedSettings = await saveUserSettings(updatedUser.userId, {
+          theme: "dark mode",
+        });
+        const notification = await sendNotification(
           savedSettings.userId,
           "Your settings have been saved!"
         );
-      })
-      .then((notification) => {
         console.log("All tasks completed successfully!");
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("An error occurred:", err);
-      });
+      }
+    };
+    performOperations();
+    // loginUser("john_doe", "password123")
+    //   .then((user) => {
+    //     return fetchUserData(user.userId);
+    //   })
+    //   .then((userData) => {
+    //     return updateUserProfile(userData, "Updated Profile Data");
+    //   })
+    //   .then((updatedUser) => {
+    //     return saveUserSettings(updatedUser.userId, { theme: "dark mode" });
+    //   })
+    //   .then((savedSettings) => {
+    //     return sendNotification(
+    //       savedSettings.userId,
+    //       "Your settings have been saved!"
+    //     );
+    //   })
+    //   .then((notification) => {
+    //     console.log("All tasks completed successfully!");
+    //   })
+    //   .catch((err) => {
+    //     console.error("An error occurred:", err);
+    //   });
   }, []);
   return (
     <div>
