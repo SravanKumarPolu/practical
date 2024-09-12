@@ -1,105 +1,54 @@
-// App.js
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 
-function App() {
-  // UserProfile
-  function loginUser(username, password) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("User logged in");
-        resolve({ userId: 1, username: username });
-      }, 1000);
-    });
-  }
+function AnagramGrouper() {
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState([]);
 
-  function fetchUserData(userId) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("User data fetched");
-        resolve({ userId: userId, profile: "User Profile Data" });
-      }, 1000);
-    });
-  }
-
-  function updateUserProfile(userData, newProfile) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("User profile updated");
-        userData.profile = newProfile;
-        resolve(userData);
-      }, 1000);
-    });
-  }
-
-  function saveUserSettings(userId, settings) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("User settings saved");
-        resolve({ userId: userId, settings: settings });
-      }, 1000);
-    });
-  }
-
-  function sendNotification(userId, message) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("Notification sent to user");
-        resolve({ userId: userId, message: message });
-      }, 1000);
-    });
-  }
-  useEffect(() => {
-    // Wrapping the async function inside useEffect
-    const performOperations = async () => {
-      try {
-        const user = await loginUser("pvskr", "pass12345");
-        const userData = await fetchUserData(user.userId);
-        const updatedUser = await updateUserProfile(
-          userData,
-          "Updated Profile Data"
-        );
-        const savedSettings = await saveUserSettings(updatedUser.userId, {
-          theme: "dark mode",
-        });
-        const notification = await sendNotification(
-          savedSettings.userId,
-          "Your settings have been saved!"
-        );
-        console.log("All tasks completed successfully!");
-      } catch (err) {
-        console.error("An error occurred:", err);
+  // Function to group anagrams
+  function grAnagrams(arr) {
+    const anagrams = {};
+    arr.forEach((word) => {
+      const sortedWord = word.toLowerCase().split("").sort().join("");
+      if (!anagrams[sortedWord]) {
+        anagrams[sortedWord] = [];
       }
-    };
-    performOperations();
-    // loginUser("john_doe", "password123")
-    //   .then((user) => {
-    //     return fetchUserData(user.userId);
-    //   })
-    //   .then((userData) => {
-    //     return updateUserProfile(userData, "Updated Profile Data");
-    //   })
-    //   .then((updatedUser) => {
-    //     return saveUserSettings(updatedUser.userId, { theme: "dark mode" });
-    //   })
-    //   .then((savedSettings) => {
-    //     return sendNotification(
-    //       savedSettings.userId,
-    //       "Your settings have been saved!"
-    //     );
-    //   })
-    //   .then((notification) => {
-    //     console.log("All tasks completed successfully!");
-    //   })
-    //   .catch((err) => {
-    //     console.error("An error occurred:", err);
-    //   });
-  }, []);
+      anagrams[sortedWord].push(word);
+    });
+    return Object.values(anagrams);
+  }
+
+  // Handler for input change
+  const handleInputChange = (event) => {
+    setInput(event.target.value);
+  };
+
+  // Handler for grouping anagrams when user clicks the button
+  const handleGroupAnagrams = () => {
+    const words = input.split(",").map((word) => word.trim());
+    const groupedAnagrams = grAnagrams(words);
+    setResult(groupedAnagrams);
+  };
+
   return (
     <div>
-      <h1>User Profile</h1>
-      <p>Check the console for the result of the operations.</p>
+      <h1>Anagram Grouper</h1>
+      <input
+        type="text"
+        value={input}
+        onChange={handleInputChange}
+        placeholder="Enter words separated by commas"
+      />
+      <button onClick={handleGroupAnagrams}>Group Anagrams</button>
+
+      <div>
+        {result.map((group, index) => (
+          <div key={index}>
+            <strong>Group {index + 1}:</strong> {group.join(", ")}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default App;
+export default AnagramGrouper;
