@@ -16,6 +16,7 @@ function AnagramGrouper() {
     });
     return Object.values(anagrams);
   }
+  console.log(grAnagrams(["Silent", "bat", " dog", "god", "tensil", "tan"]));
 
   // Handler for input change
   const handleInputChange = (event) => {
